@@ -1,0 +1,138 @@
+package com.firstmetcs.springbootsecurityoauth.config.swagger;
+
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.*;
+import springfox.documentation.service.*;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.*;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+/**
+ * swagger 核心配置类
+ *
+ * @author fancunshuo
+ */
+@Configuration
+@EnableSwagger2  // 声明为swagger
+public class SwaggerConfig {
+    @Value("${swagger.enable}")
+    private boolean swaggerEnable;
+
+    @Bean
+    public Docket docket() {
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .enable(swaggerEnable)
+                .apiInfo(apiInfo())
+                .select()
+                // 设置basePackage会将包下的所有被@Api标记类的所有方法作为api
+                .apis(RequestHandlerSelectors.basePackage("com.firstmetcs.springbootsecurityoauth.controller"))
+                //只有标记了@ApiOperation的方法才会暴露出给swagger
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                // 整合oauth2
+                .securitySchemes(Arrays.asList(securitySchemes(), apiKey()))
+                .securityContexts(Collections.singletonList(securityContexts()));
+
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                // 文档说明
+                .title("API接口文档")
+                // 文档描述
+                .description("swagger2 api文档")
+                // 文档版本
+                .version("1.0")
+                .license("Apache License Version 2.0")
+                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
+                .contact(new Contact("Spring security swagger", "http://localhost:8080/swagger-ui.html", null))
+                .build();
+    }
+
+//    @Bean
+//    UiConfiguration uiConfig() {
+//        return UiConfigurationBuilder.builder()
+//                .deepLinking(true)
+//                .displayOperationId(false)
+//                .defaultModelsExpandDepth(1)
+//                .defaultModelExpandDepth(1)
+//                .defaultModelRendering(ModelRendering.EXAMPLE)
+//                .displayRequestDuration(false)
+//                .docExpansion(DocExpansion.NONE)
+//                .filter(false)
+//                .maxDisplayedTags(null)
+//                .operationsSorter(OperationsSorter.ALPHA)
+//                .showExtensions(false)
+//                .tagsSorter(TagsSorter.ALPHA)
+//                .validatorUrl(null)
+//                .build();
+//    }
+
+
+    private ApiKey apiKey() {
+        return new ApiKey("Bearer", "Authorization", "header");
+    }
+
+    /**
+     * 认证方式使用密码模式
+     */
+    private SecurityScheme securitySchemes() {
+        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/oauth/token");
+
+        return new OAuthBuilder()
+                .name("Authorization")
+                .grantTypes(Collections.singletonList(grantType))
+                .scopes(Arrays.asList(scopes()))
+                .build();
+    }
+
+    @Bean
+    SecurityConfiguration security() {
+        return SecurityConfigurationBuilder.builder()
+                .clientId("login")
+                .clientSecret("Norma1-login")
+//                .realm("test-app-realm")
+//                .appName("test-app")
+                .scopeSeparator(",")
+                .additionalQueryStringParams(null)
+                .useBasicAuthenticationWithAccessCodeGrant(false)
+                .build();
+    }
+
+    /**
+     * 设置 swagger2 认证的安全上下文
+     */
+    private SecurityContext securityContexts() {
+        return SecurityContext.builder()
+                .securityReferences(Arrays.asList(new SecurityReference("Authorization", scopes()), new SecurityReference("Bearer", scopes())))
+                .forPaths(PathSelectors.any())
+                .build();
+    }
+
+    /**
+     * 设置认证的作用域scope
+     *
+     * @return AuthorizationScope[]
+     */
+    private AuthorizationScope[] scopes() {
+        AuthorizationScope authorizationScopeAll = new AuthorizationScope("all", "默认所有");
+        AuthorizationScope authorizationScopeRead = new AuthorizationScope("read", "读取数据");
+        AuthorizationScope authorizationScopeTest = new AuthorizationScope("test", "测试");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[3];
+        authorizationScopes[0] = authorizationScopeAll;
+        authorizationScopes[1] = authorizationScopeRead;
+        authorizationScopes[2] = authorizationScopeTest;
+        return authorizationScopes;
+    }
+
+}
