@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.firstmetcs.springbootsecurityoauth.dao.security.SysRouteMapper">
+  <resultMap id="BaseResultMap" type="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="HIDE_IN_MENU" jdbcType="INTEGER" property="hideInMenu" />
+    <result column="PID" jdbcType="INTEGER" property="pid" />
+  </resultMap>
+  <resultMap id="SelfAuthorityResultMap" type="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="HIDE_IN_MENU" jdbcType="INTEGER" property="hideInMenu" />
+    <result column="PID" jdbcType="INTEGER" property="pid" />
+    <collection property="authority" ofType="string">
+      <result column="ROLE_CODE"/>
+    </collection>
+    <collection property="children" select="selectWithRoleByUserIdAndPid" column="{userId=USER_ID,pid=ID}"></collection>
+  </resultMap>
+  <resultMap id="SelfResultMap" type="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="PATH" jdbcType="VARCHAR" property="path" />
+    <result column="ICON" jdbcType="VARCHAR" property="icon" />
+    <result column="HIDE_IN_MENU" jdbcType="INTEGER" property="hideInMenu" />
+    <result column="PID" jdbcType="INTEGER" property="pid" />
+    <collection property="children" select="selectByPid" column="{pid=ID}"></collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CODE, NAME, PATH, ICON, HIDE_IN_MENU, PID
+  </sql>
+  <sql id="Role_Column_List">
+    srt.ID, srt.CODE, srt.NAME, srt.PATH, srt.ICON, srt.HIDE_IN_MENU, srt.PID, srl.CODE ROLE_CODE, su.USER_ID USER_ID
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from SYS_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    insert into SYS_ROUTE (ID, CODE, NAME, 
+      PATH, ICON, HIDE_IN_MENU, 
+      PID)
+    values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{path,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, #{hideInMenu,jdbcType=INTEGER},
+      #{pid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    insert into SYS_ROUTE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="code != null">
+        CODE,
+      </if>
+      <if test="name != null">
+        NAME,
+      </if>
+      <if test="path != null">
+        PATH,
+      </if>
+      <if test="icon != null">
+        ICON,
+      </if>
+      <if test="hideInMenu != null">
+        HIDE_IN_MENU,
+      </if>
+      <if test="pid != null">
+        PID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="code != null">
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="hideInMenu != null">
+        #{hideInMenu,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null">
+        #{pid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    update SYS_ROUTE
+    <set>
+      <if test="code != null">
+        CODE = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="path != null">
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null">
+        ICON = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="hideInMenu != null">
+        HIDE_IN_MENU = #{hideInMenu,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null">
+        PID = #{pid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+    update SYS_ROUTE
+    set CODE = #{code,jdbcType=VARCHAR},
+      NAME = #{name,jdbcType=VARCHAR},
+      PATH = #{path,jdbcType=VARCHAR},
+      ICON = #{icon,jdbcType=VARCHAR},
+      HIDE_IN_MENU = #{hideInMenu,jdbcType=INTEGER},
+      PID = #{pid,jdbcType=INTEGER}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectWithRoleByUserIdAndPid" resultMap="SelfAuthorityResultMap">
+    select
+    <include refid="Role_Column_List" />
+    from SYS_ROUTE srt
+    left join SYS_ROLE_ROUTE srr on srr.ROUTE_ID = srt.ID
+    left join SYS_ROLE srl on srr.ROLE_ID = srl.ID
+    left join SYS_USER_ROLE sur on srl.ID = sur.ROLE_ID
+    left join SYS_USER su on sur.USER_ID = su.ID
+    where 1 = 1
+    <if test="userId != null">
+      and su.USER_ID = #{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="pid != null">
+      and srt.PID = #{pid,jdbcType=VARCHAR}
+    </if>
+    order by srt.ID
+  </select>
+  <select id="selectByPid" resultMap="SelfResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from SYS_ROUTE srt
+    where 1 = 1
+    <if test="pid != null">
+      and srt.PID = #{pid,jdbcType=VARCHAR}
+    </if>
+  </select>
+  <select id="selectByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    srt.<include refid="Base_Column_List" />
+    from SYS_ROUTE srt
+    left join SYS_ROLE_ROUTE srr on srr.ROUTE_ID = srt.ID
+    where 1 = 1
+    <if test="roleId != null">
+      and srr.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+    </if>
+  </select>
+</mapper>
