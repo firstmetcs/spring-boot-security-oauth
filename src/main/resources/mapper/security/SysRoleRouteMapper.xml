@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.firstmetcs.springbootsecurityoauth.dao.security.SysRoleRouteMapper">
+  <resultMap id="BaseResultMap" type="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="ROLE_ID" jdbcType="INTEGER" property="roleId" />
+    <result column="ROUTE_ID" jdbcType="INTEGER" property="routeId" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
+    <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ROLE_ID, ROUTE_ID, STATUS, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from SYS_ROLE_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from SYS_ROLE_ROUTE
+    where ID = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    insert into SYS_ROLE_ROUTE (ID, ROLE_ID, ROUTE_ID, 
+      STATUS, REMARK)
+    values (#{id,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{routeId,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    insert into SYS_ROLE_ROUTE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="roleId != null">
+        ROLE_ID,
+      </if>
+      <if test="routeId != null">
+        ROUTE_ID,
+      </if>
+      <if test="status != null">
+        STATUS,
+      </if>
+      <if test="remark != null">
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="routeId != null">
+        #{routeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    update SYS_ROLE_ROUTE
+    <set>
+      <if test="roleId != null">
+        ROLE_ID = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="routeId != null">
+        ROUTE_ID = #{routeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        STATUS = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    update SYS_ROLE_ROUTE
+    set ROLE_ID = #{roleId,jdbcType=INTEGER},
+      ROUTE_ID = #{routeId,jdbcType=INTEGER},
+      STATUS = #{status,jdbcType=INTEGER},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+    delete from SYS_ROLE_ROUTE
+    where ROLE_ID = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    insert into SYS_ROLE_ROUTE (ROLE_ID, ROUTE_ID,
+                                STATUS, REMARK)
+    <foreach collection ="list" item="roleRoute" separator="union">
+      select #{roleRoute.roleId,jdbcType=INTEGER}, #{roleRoute.routeId,jdbcType=INTEGER},
+      #{roleRoute.status,jdbcType=INTEGER}, #{roleRoute.remark,jdbcType=VARCHAR} from dual
+    </foreach >
+  </insert>
+</mapper>

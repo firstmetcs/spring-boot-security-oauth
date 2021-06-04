@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: local
+#    active: develop
+#    active: prod
+
+#jasypt加密的密匙
+jasypt:
+  encryptor:
+    #develop
+#    password: --
+    #prod
+#    password: --
+
+SSO_TOKEN_SECRET_PROD: --
