@@ -1,6 +1,7 @@
 package com.firstmetcs.springbootsecurityoauth.model.security;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SysRole {
@@ -13,6 +14,14 @@ public class SysRole {
     private Integer status;
 
     private String remark;
+
+    private String insUserId;
+
+    private Date insDttm;
+
+    private String updUserId;
+
+    private Date updDttm;
 
     List<SysApi> apiList = new ArrayList<>();
 
@@ -82,5 +91,37 @@ public class SysRole {
 
     public void setRouteList(List<SysRoute> routeList) {
         this.routeList = routeList;
+    }
+
+    public String getInsUserId() {
+        return insUserId;
+    }
+
+    public void setInsUserId(String insUserId) {
+        this.insUserId = insUserId;
+    }
+
+    public Date getInsDttm() {
+        return insDttm;
+    }
+
+    public void setInsDttm(Date insDttm) {
+        this.insDttm = insDttm;
+    }
+
+    public String getUpdUserId() {
+        return updUserId;
+    }
+
+    public void setUpdUserId(String updUserId) {
+        this.updUserId = updUserId;
+    }
+
+    public Date getUpdDttm() {
+        return updDttm;
+    }
+
+    public void setUpdDttm(Date updDttm) {
+        this.updDttm = updDttm;
     }
 }
