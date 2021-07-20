@@ -5,14 +5,18 @@
     <id column="ID" jdbcType="INTEGER" property="id" />
     <result column="CODE" jdbcType="VARCHAR" property="code" />
     <result column="NAME" jdbcType="VARCHAR" property="name" />
-    <result column="STATUS" jdbcType="DECIMAL" property="status" />
+    <result column="STATUS" jdbcType="INTEGER" property="status" />
     <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    <result column="INS_USER_ID" jdbcType="VARCHAR" property="insUserId" />
+    <result column="INS_DTTM" jdbcType="TIMESTAMP" property="insDttm" />
+    <result column="UPD_USER_ID" jdbcType="VARCHAR" property="updUserId" />
+    <result column="UPD_DTTM" jdbcType="TIMESTAMP" property="updDttm" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, CODE, NAME, STATUS, REMARK
+    ID, CODE, NAME, STATUS, REMARK, INS_USER_ID, INS_DTTM, UPD_USER_ID, UPD_DTTM
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from SYS_ROLE
     where ID = #{id,jdbcType=INTEGER}
@@ -22,10 +26,14 @@
     where ID = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRole">
-    insert into SYS_ROLE (ID, CODE, NAME, 
-      STATUS, REMARK)
+    insert into SYS_ROLE (ID, CODE, NAME,
+      STATUS, REMARK, INS_USER_ID,
+      INS_DTTM, UPD_USER_ID, UPD_DTTM
+      )
     values (#{id,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
-      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{insUserId,jdbcType=VARCHAR},
+      #{insDttm,jdbcType=TIMESTAMP}, #{updUserId,jdbcType=VARCHAR}, #{updDttm,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRole">
     insert into SYS_ROLE
@@ -45,6 +53,18 @@
       <if test="remark != null">
         REMARK,
       </if>
+      <if test="insUserId != null">
+        INS_USER_ID,
+      </if>
+      <if test="insDttm != null">
+        INS_DTTM,
+      </if>
+      <if test="updUserId != null">
+        UPD_USER_ID,
+      </if>
+      <if test="updDttm != null">
+        UPD_DTTM,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -61,6 +81,18 @@
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="insUserId != null">
+        #{insUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="insDttm != null">
+        #{insDttm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updUserId != null">
+        #{updUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="updDttm != null">
+        #{updDttm,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -79,6 +111,18 @@
       <if test="remark != null">
         REMARK = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="insUserId != null">
+        INS_USER_ID = #{insUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="insDttm != null">
+        INS_DTTM = #{insDttm,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updUserId != null">
+        UPD_USER_ID = #{updUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="updDttm != null">
+        UPD_DTTM = #{updDttm,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where ID = #{id,jdbcType=INTEGER}
   </update>
@@ -87,7 +131,11 @@
     set CODE = #{code,jdbcType=VARCHAR},
       NAME = #{name,jdbcType=VARCHAR},
       STATUS = #{status,jdbcType=INTEGER},
-      REMARK = #{remark,jdbcType=VARCHAR}
+      REMARK = #{remark,jdbcType=VARCHAR},
+      INS_USER_ID = #{insUserId,jdbcType=VARCHAR},
+      INS_DTTM = #{insDttm,jdbcType=TIMESTAMP},
+      UPD_USER_ID = #{updUserId,jdbcType=VARCHAR},
+      UPD_DTTM = #{updDttm,jdbcType=TIMESTAMP}
     where ID = #{id,jdbcType=INTEGER}
   </update>
 
