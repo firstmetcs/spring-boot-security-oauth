@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>授权</title>
@@ -37,6 +38,7 @@
 <div class="title">
     <div class="float-left">OAUTH 授权</div>
     <div class="float-right" style="font-size: 16px">
+        <span class="adminName" sec:authentication="principal.userName"></span>
         <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.userName}"></span>
         <a href="#help" class="text-white ml-2">帮助</a>
         <a href="/logout" class="text-white ml-2">退出</a>
