@@ -20,8 +20,6 @@ public class UserInfo extends User {
 
     private String userGroup;
 
-    private String password;
-
     private Integer unreadCount;
 
     private String remark;
@@ -80,15 +78,6 @@ public class UserInfo extends User {
 
     public void setUserGroup(String userGroup) {
         this.userGroup = userGroup;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Integer getUnreadCount() {
