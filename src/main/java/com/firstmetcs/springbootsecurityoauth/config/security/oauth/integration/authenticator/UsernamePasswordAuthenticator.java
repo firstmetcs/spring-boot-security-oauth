@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+/**
+ * 默认用户名密码认证器
+ *
+ * @author fancunshuo
+ */
 @Component
 @Primary
 public class UsernamePasswordAuthenticator extends AbstractPreparableIntegrationAuthenticator {

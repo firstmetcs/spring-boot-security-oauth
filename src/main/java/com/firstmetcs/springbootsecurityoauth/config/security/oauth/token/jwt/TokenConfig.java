@@ -1,6 +1,6 @@
-package com.firstmetcs.springbootsecurityoauth.config.security.oauth.token.jwt;//package com.firstmetcs.springbootsecurity.config.security.oauth.token.jwt;
+//package com.firstmetcs.springbootsecurityoauth.config.security.oauth.token.jwt;
 //
-//import com.firstmetcs.springbootsecurity.config.security.security.service.UserDetailsServiceImpl;
+//import com.firstmetcs.springbootsecurityoauth.config.security.security.service.UserDetailsServiceImpl;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
@@ -10,6 +10,9 @@ package com.firstmetcs.springbootsecurityoauth.config.security.oauth.token.jwt;/
 //import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 //import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 //
+///**
+// * @author fancunshuo
+// */
 //@Configuration
 //public class TokenConfig {
 //
@@ -27,14 +30,15 @@ package com.firstmetcs.springbootsecurityoauth.config.security.oauth.token.jwt;/
 //
 //    @Bean
 //    public JwtAccessTokenConverter jwtAccessTokenConverter() {
-//        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-//        jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
-//        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-//        DefaultUserAuthenticationConverter userTokenConverter = new DefaultUserAuthenticationConverter();
-//        userTokenConverter.setUserDetailsService(userDetailsService);
-//        accessTokenConverter.setUserTokenConverter(userTokenConverter);
-//
-//        jwtAccessTokenConverter.setAccessTokenConverter(accessTokenConverter);
-//        return jwtAccessTokenConverter;
+////        JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+////        jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
+////        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+////        DefaultUserAuthenticationConverter userTokenConverter = new DefaultUserAuthenticationConverter();
+////        userTokenConverter.setUserDetailsService(userDetailsService);
+////        accessTokenConverter.setUserTokenConverter(userTokenConverter);
+////
+////        jwtAccessTokenConverter.setAccessTokenConverter(accessTokenConverter);
+////        return jwtAccessTokenConverter;
+//        return new OauthJwtAccessTokenConverter(userDetailsService);
 //    }
 //}

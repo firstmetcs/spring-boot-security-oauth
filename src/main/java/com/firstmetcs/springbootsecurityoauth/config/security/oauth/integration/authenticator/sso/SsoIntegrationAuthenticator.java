@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
+ * 完美SSO认证器
+ *
  * @author fancunshuo
  */
 @Component
