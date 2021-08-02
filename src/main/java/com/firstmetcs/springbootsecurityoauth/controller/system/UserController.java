@@ -58,6 +58,7 @@ public class UserController {
     @ApiOperation(value = "获取当前用户信息", notes = "获取当前用户信息备注", httpMethod = "GET")
     public ResponseEntity<Object> currentUser(@ApiIgnore Authentication authentication, @ApiIgnore Principal principal, @ApiIgnore @AuthenticationPrincipal UserInfo user) {
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
+        user.eraseCredentials();
 //        userInfo.setPassword(null);
 //        userInfo.setAuthority(null);
 //        userInfo.setPermission(null);
