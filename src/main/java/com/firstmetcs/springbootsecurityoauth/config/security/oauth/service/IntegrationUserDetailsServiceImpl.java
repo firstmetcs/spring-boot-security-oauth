@@ -2,8 +2,12 @@ package com.firstmetcs.springbootsecurityoauth.config.security.oauth.service;
 
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.IntegrationAuthenticationContext;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.IntegrationAuthentication;
+import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.authenticator.DefaultOAuthClientAuthentication;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.authenticator.IntegrationAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +25,11 @@ public class IntegrationUserDetailsServiceImpl implements UserDetailsService {
 
     private List<IntegrationAuthenticator> authenticators;
 
+    @Autowired
+    private AuthenticationEventPublisher authenticationEventPublisher;
+
+    private final AccountStatusUserDetailsChecker accountStatusUserDetailsChecker = new AccountStatusUserDetailsChecker();
+
     @Autowired(required = false)
     public void setIntegrationAuthenticators(List<IntegrationAuthenticator> authenticators) {
         this.authenticators = authenticators;
@@ -34,7 +43,14 @@ public class IntegrationUserDetailsServiceImpl implements UserDetailsService {
             integrationAuthentication = new IntegrationAuthentication();
         }
         integrationAuthentication.setUsername(username);
-        UserDetails userVO = this.authenticate(integrationAuthentication);
+        UserDetails userVO = null;
+        try {
+            userVO = this.authenticate(integrationAuthentication);
+            accountStatusUserDetailsChecker.check(userVO);
+        } catch (AuthenticationException ex) {
+            authenticationEventPublisher.publishAuthenticationFailure(ex, new DefaultOAuthClientAuthentication());
+            throw ex;
+        }
 
         if (userVO == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
