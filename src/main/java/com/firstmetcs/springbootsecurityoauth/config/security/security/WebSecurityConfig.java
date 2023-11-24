@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -62,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //user Details Service验证
 //        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         // 设置 userDetailsService 和  authenticationProvider 都会创建一个 Provider。 如果仅需要一个，请只设置一个
-        auth.authenticationProvider(captchaAuthenticationProvider).authenticationProvider(authenticationProvider);
+        auth.authenticationProvider(captchaAuthenticationProvider).authenticationProvider(authenticationProvider).authenticationEventPublisher(authenticationEventPublisher());
     }
 
     @Bean
@@ -70,6 +71,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 使用BCryptPasswordEncoder加密
         return new BCryptPasswordEncoder();
 //        return NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public DefaultAuthenticationEventPublisher authenticationEventPublisher() {
+        return new DefaultAuthenticationEventPublisher();
     }
 
     @Override

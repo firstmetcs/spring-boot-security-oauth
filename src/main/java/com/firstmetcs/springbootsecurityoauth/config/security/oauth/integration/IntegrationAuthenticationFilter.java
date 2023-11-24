@@ -1,12 +1,16 @@
 package com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration;
 
+import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.authenticator.DefaultOAuthClientAuthentication;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.authenticator.IntegrationAuthenticator;
 import com.github.pagehelper.util.StringUtil;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -41,6 +45,9 @@ public class IntegrationAuthenticationFilter extends GenericFilterBean implement
     private ApplicationContext applicationContext;
 
     private final RequestMatcher requestMatcher;
+
+    @Autowired
+    private AuthenticationEventPublisher authenticationEventPublisher;
 
     public IntegrationAuthenticationFilter() {
         this.requestMatcher = new OrRequestMatcher(
@@ -102,7 +109,12 @@ public class IntegrationAuthenticationFilter extends GenericFilterBean implement
 
         for (IntegrationAuthenticator authenticator : authenticators) {
             if (authenticator.support(integrationAuthentication)) {
-                authenticator.prepare(integrationAuthentication);
+                try {
+                    authenticator.prepare(integrationAuthentication);
+                } catch (AuthenticationException ex) {
+                    authenticationEventPublisher.publishAuthenticationFailure(ex, new DefaultOAuthClientAuthentication());
+                    throw ex;
+                }
             }
         }
     }
