@@ -14,14 +14,14 @@ import springfox.documentation.spring.web.plugins.Docket;
 @Configuration
 public class SwaggerTags {
 
-    public static final String TEST = "Test";
-    public static final String USER = "User";
-    public static final String HELLO = "Hello";
-    public static final String GUEST = "Guest";
-    public static final String AUTHORITY = "Authority";
-    public static final String ROLE = "Role";
-    public static final String ROUTE = "Route";
-    public static final String API = "Api";
+    public static final String TEST = "Test Controller";
+    public static final String USER = "User Controller";
+    public static final String HELLO = "Hello Controller";
+    public static final String GUEST = "Guest Controller";
+    public static final String AUTHORITY = "Authority Controller";
+    public static final String ROLE = "Role Controller";
+    public static final String ROUTE = "Route Controller";
+    public static final String API = "Api Controller";
 
     @Autowired
     public SwaggerTags(Docket docket) {

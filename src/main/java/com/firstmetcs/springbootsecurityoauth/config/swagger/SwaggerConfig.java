@@ -40,7 +40,7 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 // 整合oauth2
-                .securitySchemes(Arrays.asList(securitySchemes(), apiKey()))
+                .securitySchemes(Arrays.asList(resourceOwnerPasswordCredentialsSecuritySchemes(), clientCredentialsSecuritySchemes(), authorizationCodeSecuritySchemes(), apiKey()))
                 .securityContexts(Collections.singletonList(securityContexts()));
 
     }
@@ -80,17 +80,45 @@ public class SwaggerConfig {
 
 
     private ApiKey apiKey() {
-        return new ApiKey("Bearer", "Authorization", "header");
+        return new ApiKey("Authorization Bearer", "Authorization", "header");
     }
 
     /**
      * 认证方式使用密码模式
      */
-    private SecurityScheme securitySchemes() {
+    private SecurityScheme resourceOwnerPasswordCredentialsSecuritySchemes() {
         GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/oauth/token");
 
         return new OAuthBuilder()
-                .name("Authorization")
+                .name("ResourceOwnerPassword Authorization")
+                .grantTypes(Collections.singletonList(grantType))
+                .scopes(Arrays.asList(scopes()))
+                .build();
+    }
+
+    /**
+     * 认证方式使用客户端模式
+     */
+    private SecurityScheme clientCredentialsSecuritySchemes() {
+        GrantType grantType = new ClientCredentialsGrant("/oauth/token");
+
+        return new OAuthBuilder()
+                .name("Client Authorization")
+                .grantTypes(Collections.singletonList(grantType))
+                .scopes(Arrays.asList(scopes()))
+                .build();
+    }
+
+    /**
+     * 认证方式使用授权码模式
+     */
+    private SecurityScheme authorizationCodeSecuritySchemes() {
+        GrantType grantType = new AuthorizationCodeGrant(new TokenRequestEndpoint("/oauth/authorize", "login",
+                "Norma1-login"),
+                new TokenEndpoint("/oauth/token", "JWT-TOKEN"));
+
+        return new OAuthBuilder()
+                .name("AuthorizationCode Authorization")
                 .grantTypes(Collections.singletonList(grantType))
                 .scopes(Arrays.asList(scopes()))
                 .build();
@@ -103,7 +131,7 @@ public class SwaggerConfig {
                 .clientSecret("Norma1-login")
 //                .realm("test-app-realm")
 //                .appName("test-app")
-                .scopeSeparator(",")
+                .scopeSeparator(" ")
                 .additionalQueryStringParams(null)
                 .useBasicAuthenticationWithAccessCodeGrant(false)
                 .build();
@@ -114,7 +142,7 @@ public class SwaggerConfig {
      */
     private SecurityContext securityContexts() {
         return SecurityContext.builder()
-                .securityReferences(Arrays.asList(new SecurityReference("Authorization", scopes()), new SecurityReference("Bearer", scopes())))
+                .securityReferences(Arrays.asList(new SecurityReference("ResourceOwnerPassword Authorization", scopes()), new SecurityReference("Client Authorization", scopes()), new SecurityReference("AuthorizationCode Authorization", scopes()), new SecurityReference("Bearer", scopes())))
                 .forPaths(PathSelectors.any())
                 .build();
     }
