@@ -24,6 +24,8 @@ public class UserInfo extends User {
 
     private String remark;
 
+    private Integer status;
+
     List<String> authority = new ArrayList<>();
 
     List<String> permission = new ArrayList<>();
@@ -96,6 +98,14 @@ public class UserInfo extends User {
         this.remark = remark;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public List<String> getAuthority() {
         return authority;
     }
@@ -110,5 +120,21 @@ public class UserInfo extends User {
 
     public void setPermission(List<String> permission) {
         this.permission = permission;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        if (status == null) {
+            return true;
+        }
+        return status != 1;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        if (status == null) {
+            return true;
+        }
+        return status != 2;
     }
 }
