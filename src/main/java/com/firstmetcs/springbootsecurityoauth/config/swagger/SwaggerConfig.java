@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
@@ -26,15 +27,55 @@ public class SwaggerConfig {
     @Value("${swagger.enable}")
     private boolean swaggerEnable;
 
+    @Primary
     @Bean
     public Docket docket() {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .enable(swaggerEnable)
                 .apiInfo(apiInfo())
+                .groupName("全部")
                 .select()
                 // 设置basePackage会将包下的所有被@Api标记类的所有方法作为api
                 .apis(RequestHandlerSelectors.basePackage("com.firstmetcs.springbootsecurityoauth.controller"))
+                //只有标记了@ApiOperation的方法才会暴露出给swagger
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                // 整合oauth2
+                .securitySchemes(Arrays.asList(resourceOwnerPasswordCredentialsSecuritySchemes(), clientCredentialsSecuritySchemes(), authorizationCodeSecuritySchemes(), apiKey()))
+                .securityContexts(Collections.singletonList(securityContexts()));
+
+    }
+    @Bean("systemDocket")
+    public Docket systemDocket() {
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .enable(swaggerEnable)
+                .apiInfo(apiInfo())
+                .groupName("系统管理")
+                .select()
+                // 设置basePackage会将包下的所有被@Api标记类的所有方法作为api
+                .apis(RequestHandlerSelectors.basePackage("com.firstmetcs.springbootsecurityoauth.controller.system"))
+                //只有标记了@ApiOperation的方法才会暴露出给swagger
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                // 整合oauth2
+                .securitySchemes(Arrays.asList(resourceOwnerPasswordCredentialsSecuritySchemes(), clientCredentialsSecuritySchemes(), authorizationCodeSecuritySchemes(), apiKey()))
+                .securityContexts(Collections.singletonList(securityContexts()));
+
+    }
+    @Bean("testDocket")
+    public Docket testDocket() {
+
+        return new Docket(DocumentationType.SWAGGER_2)
+                .enable(swaggerEnable)
+                .apiInfo(apiInfo())
+                .groupName("测试")
+                .select()
+                // 设置basePackage会将包下的所有被@Api标记类的所有方法作为api
+                .apis(RequestHandlerSelectors.basePackage("com.firstmetcs.springbootsecurityoauth.controller.test"))
                 //只有标记了@ApiOperation的方法才会暴露出给swagger
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())

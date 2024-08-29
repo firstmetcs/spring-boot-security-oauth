@@ -1,4 +1,4 @@
-package com.firstmetcs.springbootsecurityoauth.controller;
+package com.firstmetcs.springbootsecurityoauth.controller.test;
 
 import com.firstmetcs.springbootsecurityoauth.config.swagger.SwaggerTags;
 import com.firstmetcs.springbootsecurityoauth.dao.security.SysRouteMapper;
