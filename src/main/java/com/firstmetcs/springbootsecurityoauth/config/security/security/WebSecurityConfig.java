@@ -3,13 +3,14 @@ package com.firstmetcs.springbootsecurityoauth.config.security.security;
 import com.firstmetcs.springbootsecurityoauth.config.security.security.auth.captcha.CaptchaAuthenticationProvider;
 import com.firstmetcs.springbootsecurityoauth.config.security.security.service.UserDetailsServiceImpl;
 import com.firstmetcs.springbootsecurityoauth.config.security.security.filter.CustomFilterSecurityInterceptor;
+import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.*;
+import org.springframework.security.cas.authentication.CasAuthenticationProvider;
+import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
+import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,7 +44,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    private AuthenticationProvider authenticationProvider;
+    private CasAuthenticationProvider casAuthenticationProvider;
+    @Autowired
+    private CasAuthenticationFilter casAuthenticationFilter;
+
+    @Autowired
+    private SingleSignOutFilter singleSignOutFilter;
+
+    @Autowired
+    private LogoutFilter requestSingleLogoutFilter;
+
+    @Autowired
+    private CasAuthenticationEntryPoint entryPoint;
 
     @Autowired
     private CaptchaAuthenticationProvider captchaAuthenticationProvider;
@@ -63,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //user Details Service验证
 //        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         // 设置 userDetailsService 和  authenticationProvider 都会创建一个 Provider。 如果仅需要一个，请只设置一个
-        auth.authenticationProvider(captchaAuthenticationProvider).authenticationProvider(authenticationProvider).authenticationEventPublisher(authenticationEventPublisher());
+        auth.authenticationProvider(captchaAuthenticationProvider).authenticationProvider(casAuthenticationProvider).authenticationEventPublisher(authenticationEventPublisher());
     }
 
     @Bean
@@ -86,27 +99,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/oauth/**", "/login-page").permitAll()
                 // 除了前面定义的url,后面的都得认证后访问（登陆后访问）
-                .anyRequest().authenticated()
+                .anyRequest().authenticated().and()
+                .exceptionHandling()
+                //设置认证入口
+                .authenticationEntryPoint(entryPoint)
                 // 配置 Http Basic 验证
 //                .and().httpBasic()
                 // 指定支持基于表单的身份验证。如果未指定FormLoginConfigurer#loginPage(String)，则将生成默认登录页面
                 // 默认登陆页面位于 org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter
                 .and().formLogin()
-                .loginPage("/login-page").loginProcessingUrl("/authentication/form")
+//                .loginPage("/login-page").loginProcessingUrl("/authentication/form")
                 // 注入自定义authenticationDetailsSource
-                .authenticationDetailsSource(captchaAuthenticationDetailsSource)
-                .and()
-                // 开启注销登陆
-                .logout()
-                // 注销登陆请求url
-                .logoutUrl("/logout")
-                // 清除身份信息
-                .clearAuthentication(true)
-                // session失效
-                .invalidateHttpSession(true)
+//                .authenticationDetailsSource(captchaAuthenticationDetailsSource)
                 // 关闭跨站请求防护 csrf (Cross-site request forgery)
                 .and().csrf().disable();
         http.addFilterBefore(customFilterSecurityInterceptor, FilterSecurityInterceptor.class);
+        http//设置认证入口
+                //添加过滤器,执行单点登录处理逻辑
+                .addFilter(casAuthenticationFilter)
+                //处理认证逻辑
+                .addFilterBefore(singleSignOutFilter, CasAuthenticationFilter.class)
+                //处理退出登录
+                .addFilterBefore(requestSingleLogoutFilter, LogoutFilter.class);
     }
 
     /*** 设置不拦截规则 */

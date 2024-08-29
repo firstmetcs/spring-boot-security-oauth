@@ -1,9 +1,11 @@
 package com.firstmetcs.springbootsecurityoauth.config.security.oauth;
 
+import com.firstmetcs.springbootsecurityoauth.config.security.oauth.granter.CasTicketTokenGranter;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.integration.IntegrationAuthenticationFilter;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.granter.CustomTokenGranter;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.service.IntegrationUserDetailsServiceImpl;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.exception.WebResponseExceptionTranslator;
+import com.firstmetcs.springbootsecurityoauth.config.security.oauth.service.OauthCasServiceImpl;
 import com.firstmetcs.springbootsecurityoauth.config.security.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +61,8 @@ public class AuthorizationServiceConfig extends AuthorizationServerConfigurerAda
     private WebResponseExceptionTranslator webResponseExceptionTranslator;
     @Autowired
     private IntegrationUserDetailsServiceImpl integrationUserDetailsService;
+    @Autowired
+    private OauthCasServiceImpl oauthCasService;
     @Resource
     private DataSource dataSource;
     @Autowired
@@ -134,6 +138,8 @@ public class AuthorizationServiceConfig extends AuthorizationServerConfigurerAda
         }
         // 添加自定义授权模式
         tokenGranters.add(new CustomTokenGranter(integrationUserDetailsService, tokenServices, clientDetails, requestFactory));
+        // 添加自定义授权模式(cas)
+        tokenGranters.add(new CasTicketTokenGranter(oauthCasService, authenticationManager, tokenServices, clientDetails, requestFactory));
 
         return tokenGranters;
     }
