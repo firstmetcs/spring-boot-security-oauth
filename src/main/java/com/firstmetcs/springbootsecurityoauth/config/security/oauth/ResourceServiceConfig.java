@@ -3,7 +3,10 @@ package com.firstmetcs.springbootsecurityoauth.config.security.oauth;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.exception.BootAccessDeniedHandler;
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.exception.BootOAuth2AuthExceptionEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -53,5 +56,13 @@ public class ResourceServiceConfig extends ResourceServerConfigurerAdapter {
 //                // 其他请求无需认证
 //                .permitAll()
         ;
+    }
+
+    // https://github.com/spring-projects/spring-security/issues/10227
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.addBasenames("classpath:org/springframework/security/messages");
+        return messageSource;
     }
 }
