@@ -1,6 +1,7 @@
 package com.firstmetcs.springbootsecurityoauth.config.swagger;
 
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -100,9 +101,9 @@ public class SwaggerConfig {
                 .build();
     }
 
-//    @Bean
-//    UiConfiguration uiConfig() {
-//        return UiConfigurationBuilder.builder()
+    @Bean
+    UiConfiguration uiConfig() {
+        return UiConfigurationBuilder.builder()
 //                .deepLinking(true)
 //                .displayOperationId(false)
 //                .defaultModelsExpandDepth(1)
@@ -115,9 +116,9 @@ public class SwaggerConfig {
 //                .operationsSorter(OperationsSorter.ALPHA)
 //                .showExtensions(false)
 //                .tagsSorter(TagsSorter.ALPHA)
-//                .validatorUrl(null)
-//                .build();
-//    }
+                .validatorUrl(StringUtils.EMPTY)
+                .build();
+    }
 
 
     private ApiKey apiKey() {
