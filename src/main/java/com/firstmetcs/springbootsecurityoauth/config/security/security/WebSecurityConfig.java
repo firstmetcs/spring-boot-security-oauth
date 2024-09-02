@@ -76,7 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //user Details Service验证
 //        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         // 设置 userDetailsService 和  authenticationProvider 都会创建一个 Provider。 如果仅需要一个，请只设置一个
-        auth.authenticationProvider(captchaAuthenticationProvider).authenticationProvider(casAuthenticationProvider).authenticationEventPublisher(authenticationEventPublisher());
+        auth.authenticationProvider(casAuthenticationProvider).userDetailsService(userDetailsService)
+                .and().authenticationEventPublisher(authenticationEventPublisher());
     }
 
     @Bean

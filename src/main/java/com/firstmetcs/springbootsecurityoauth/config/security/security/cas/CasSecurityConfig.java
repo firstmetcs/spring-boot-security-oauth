@@ -4,6 +4,7 @@ import com.firstmetcs.springbootsecurityoauth.config.security.security.service.U
 import org.jasig.cas.client.session.SingleSignOutFilter;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.jasig.cas.client.validation.TicketValidator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +46,8 @@ public class CasSecurityConfig {
      *
      * @return ServiceProperties
      */
-    @Bean
-    public ServiceProperties serviceProperties() {
+    @Bean("servicePropertiesWeb")
+    public ServiceProperties servicePropertiesWeb() {
         ServiceProperties serviceProperties = new ServiceProperties();
         // 与CasAuthenticationFilter监视的URL一致
         serviceProperties.setService(casClientLogin);
@@ -63,7 +64,7 @@ public class CasSecurityConfig {
      */
     @Bean
     @Primary
-    public CasAuthenticationEntryPoint authenticationEntryPoint(ServiceProperties serviceProperties) {
+    public CasAuthenticationEntryPoint authenticationEntryPoint(@Qualifier("servicePropertiesWeb") ServiceProperties serviceProperties) {
         CasAuthenticationEntryPoint entryPoint = new CasAuthenticationEntryPoint();
         // CAS Server认证的登录地址
         entryPoint.setLoginUrl(casServerLogin);
@@ -76,7 +77,7 @@ public class CasSecurityConfig {
      *
      * @return TicketValidator
      */
-    @Bean
+    @Bean("ticketValidatorWeb")
     public TicketValidator ticketValidator() {
         // 默认情况下使用Cas20ProxyTicketValidator，验证入口是${casServerPrefix}/proxyValidate
         return new Cas20ProxyTicketValidator(casServerPrefix);
@@ -90,8 +91,8 @@ public class CasSecurityConfig {
      * @param userDetailsService
      * @return CasAuthenticationProvider
      */
-    @Bean
-    public CasAuthenticationProvider casAuthenticationProvider(ServiceProperties serviceProperties, TicketValidator ticketValidator, UserDetailsServiceImpl userDetailsService) {
+    @Bean(name = "casAuthenticationProviderWeb")
+    public CasAuthenticationProvider casAuthenticationProviderWeb(@Qualifier("servicePropertiesWeb") ServiceProperties serviceProperties, @Qualifier("ticketValidatorWeb") TicketValidator ticketValidator, UserDetailsServiceImpl userDetailsService) {
         CasAuthenticationProvider provider = new CasAuthenticationProvider();
         provider.setServiceProperties(serviceProperties);
         provider.setTicketValidator(ticketValidator);
@@ -108,7 +109,7 @@ public class CasSecurityConfig {
      * @return CasAuthenticationFilter
      */
     @Bean
-    public CasAuthenticationFilter casAuthenticationFilter(ServiceProperties serviceProperties, CasAuthenticationProvider casAuthenticationProvider) {
+    public CasAuthenticationFilter casAuthenticationFilter(@Qualifier("servicePropertiesWeb") ServiceProperties serviceProperties, @Qualifier("casAuthenticationProviderWeb") CasAuthenticationProvider casAuthenticationProvider) {
         CasAuthenticationFilter filter = new CasAuthenticationFilter();
         filter.setServiceProperties(serviceProperties);
         filter.setAuthenticationManager(new ProviderManager(Collections.singletonList(casAuthenticationProvider)));
