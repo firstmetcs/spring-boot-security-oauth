@@ -28,6 +28,15 @@ public class SwaggerConfig {
     @Value("${swagger.enable}")
     private boolean swaggerEnable;
 
+    @Value("${cas.client.prefix}")
+    private String casClientPrefix;
+
+    @Value("${cas.client.token}")
+    private String casClientToken;
+
+    @Value("${cas.client.authorize}")
+    private String casClientAuthorize;
+
     @Primary
     @Bean
     public Docket docket() {
@@ -48,6 +57,7 @@ public class SwaggerConfig {
                 .securityContexts(Collections.singletonList(securityContexts()));
 
     }
+
     @Bean("systemDocket")
     public Docket systemDocket() {
 
@@ -67,6 +77,7 @@ public class SwaggerConfig {
                 .securityContexts(Collections.singletonList(securityContexts()));
 
     }
+
     @Bean("testDocket")
     public Docket testDocket() {
 
@@ -92,12 +103,12 @@ public class SwaggerConfig {
                 // 文档说明
                 .title("API接口文档")
                 // 文档描述
-                .description("swagger2 api文档")
+                .description("Swagger2 api文档")
                 // 文档版本
                 .version("1.0")
                 .license("Apache License Version 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
-                .contact(new Contact("Spring security swagger", "http://localhost:8080/swagger-ui.html", null))
+                .contact(new Contact("Spring Security Swagger", casClientPrefix + "/swagger-ui.html", null))
                 .build();
     }
 
@@ -129,7 +140,7 @@ public class SwaggerConfig {
      * 认证方式使用密码模式
      */
     private SecurityScheme resourceOwnerPasswordCredentialsSecuritySchemes() {
-        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant("/oauth/token");
+        GrantType grantType = new ResourceOwnerPasswordCredentialsGrant(casClientToken);
 
         return new OAuthBuilder()
                 .name("ResourceOwnerPassword Authorization")
@@ -142,7 +153,7 @@ public class SwaggerConfig {
      * 认证方式使用客户端模式
      */
     private SecurityScheme clientCredentialsSecuritySchemes() {
-        GrantType grantType = new ClientCredentialsGrant("/oauth/token");
+        GrantType grantType = new ClientCredentialsGrant(casClientToken);
 
         return new OAuthBuilder()
                 .name("Client Authorization")
@@ -155,9 +166,9 @@ public class SwaggerConfig {
      * 认证方式使用授权码模式
      */
     private SecurityScheme authorizationCodeSecuritySchemes() {
-        GrantType grantType = new AuthorizationCodeGrant(new TokenRequestEndpoint("/oauth/authorize", "login",
+        GrantType grantType = new AuthorizationCodeGrant(new TokenRequestEndpoint(casClientAuthorize, "login",
                 "Norma1-login"),
-                new TokenEndpoint("/oauth/token", "JWT-TOKEN"));
+                new TokenEndpoint(casClientToken, "JWT-TOKEN"));
 
         return new OAuthBuilder()
                 .name("AuthorizationCode Authorization")
