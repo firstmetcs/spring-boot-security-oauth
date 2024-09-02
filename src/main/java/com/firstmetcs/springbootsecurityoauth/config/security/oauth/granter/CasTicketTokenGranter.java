@@ -1,11 +1,6 @@
 package com.firstmetcs.springbootsecurityoauth.config.security.oauth.granter;
 
-import com.firstmetcs.springbootsecurityoauth.config.security.oauth.service.OauthCasServiceImpl;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.springframework.security.authentication.*;
-import org.springframework.security.cas.ServiceProperties;
-import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -23,17 +18,18 @@ public class CasTicketTokenGranter extends AbstractTokenGranter {
 
     private static final String GRANT_TYPE = "cas_ticket";
 
-    protected OauthCasServiceImpl userDetailsService;
+    private final AuthenticationManager authenticationManager;
 
-    public CasTicketTokenGranter(OauthCasServiceImpl userDetailsService, AuthenticationManager authenticationManager,
+    public CasTicketTokenGranter(AuthenticationManager authenticationManager,
                                  AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(tokenServices, clientDetailsService, requestFactory, GRANT_TYPE);
-        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
-    protected CasTicketTokenGranter(OauthCasServiceImpl userDetailsService, AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices,
+    protected CasTicketTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices,
                                     ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory, String grantType) {
         super(tokenServices, clientDetailsService, requestFactory, grantType);
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -46,31 +42,6 @@ public class CasTicketTokenGranter extends AbstractTokenGranter {
             token = norefresh;
         }
         return token;
-    }
-
-    public ServiceProperties serviceProperties(String url) {
-        ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService(url);
-        serviceProperties.setAuthenticateAllArtifacts(true);
-        return serviceProperties;
-    }
-
-    public ProxyGrantingTicketStorageImpl proxyGrantingTicketStorageImpl() {
-        return new ProxyGrantingTicketStorageImpl();
-    }
-
-    public static String casServerUrlPrefix = "https://sso.firstmetcs.net/cas";
-
-    public org.springframework.security.cas.authentication.CasAuthenticationProvider casAuthenticationProvider(String url) {
-        org.springframework.security.cas.authentication.CasAuthenticationProvider authenticationProvider = new org.springframework.security.cas.authentication.CasAuthenticationProvider();
-        authenticationProvider.setKey("casProvider");
-        authenticationProvider.setAuthenticationUserDetailsService(userDetailsService);
-        Cas20ProxyTicketValidator ticketValidator = new Cas20ProxyTicketValidator(casServerUrlPrefix);
-        ticketValidator.setAcceptAnyProxy(true);//允许所有代理回调链接
-        ticketValidator.setProxyGrantingTicketStorage(proxyGrantingTicketStorageImpl());
-        authenticationProvider.setTicketValidator(ticketValidator);
-        authenticationProvider.setServiceProperties(serviceProperties(url));
-        return authenticationProvider;
     }
 
     @Override
@@ -88,8 +59,6 @@ public class CasTicketTokenGranter extends AbstractTokenGranter {
         if (url == null) {
             throw new InvalidRequestException("A cas url must be supplied.");
         }
-
-        CasAuthenticationProvider authenticationManager = casAuthenticationProvider(url);
 
         Authentication userAuth = new UsernamePasswordAuthenticationToken(username, password);
         ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
