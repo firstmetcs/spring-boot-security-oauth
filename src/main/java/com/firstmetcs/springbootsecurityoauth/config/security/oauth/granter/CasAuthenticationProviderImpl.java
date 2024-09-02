@@ -25,8 +25,8 @@ public class CasAuthenticationProviderImpl {
     @Value("${cas.server.prefix}")
     private String casServerPrefix;
 
-    @Value("${cas.client.prefix}")
-    private String casClientPrefix;
+    @Value("${cas.client.token}")
+    private String casClientToken;
 
     @Bean
     public ProxyGrantingTicketStorageImpl proxyGrantingTicketStorageImpl() {
@@ -51,7 +51,7 @@ public class CasAuthenticationProviderImpl {
     @Primary
     public ServiceProperties servicePropertiesCas() {
         ServiceProperties serviceProperties = new ServiceProperties();
-        serviceProperties.setService(casClientPrefix + "/oauth/token");
+        serviceProperties.setService(casClientToken);
         serviceProperties.setAuthenticateAllArtifacts(true);
         return serviceProperties;
     }
