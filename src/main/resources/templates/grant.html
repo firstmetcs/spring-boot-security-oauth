@@ -41,13 +41,13 @@
         <span class="adminName" sec:authentication="principal.userName"></span>
         <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.userName}"></span>
         <a href="#help" class="text-white ml-2">帮助</a>
-        <a href="/logout" class="text-white ml-2">退出</a>
+        <a th:href="${@environment.getProperty('cas.client.logout')}" class="text-white ml-2">退出</a>
     </div>
 </div>
 <div class="justify-content-center d-flex mt-3 mb-3">
     <div class="text-left">
         <h5 th:text="${clientId}+' 请求授权，该应用将获取你的以下信息'" class="mt-3 mb-3"></h5>
-        <form method="post" action="/oauth/authorize">
+        <form method="post" th:action="@{/oauth/authorize}">
             <input type="hidden" name="user_oauth_approval" value="true">
             <ul class="list-group mt-3 mb-3 scope-list-group">
                 <li th:each="scope:${scopes}" class="list-group-item">
