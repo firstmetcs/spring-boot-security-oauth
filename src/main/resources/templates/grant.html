@@ -4,9 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <title>授权</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
 </head>
 <style>
+    html, body {
+        height: 100%;
+    }
+
+    body {
+        background-color: #F3F3F3;
+    }
 
     .title {
         background-color: #1E90FF;
@@ -19,60 +27,183 @@
     }
 
     .scope-list-group .list-group-item:first-child {
-        border-top-left-radius: 0.5rem;
-        border-top-right-radius: 0.5rem;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
     }
 
     .scope-list-group .list-group-item:last-child {
         margin-bottom: 0;
-        border-bottom-right-radius: .5rem;
-        border-bottom-left-radius: .5rem;
+        border-bottom-right-radius: .25rem;
+        border-bottom-left-radius: .25rem;
     }
 
     .scope-list-group .list-group-item {
         margin-bottom: -2px;
-        border: 2px solid rgba(0, 0, 0, .125);
+        border: 1px solid rgba(0, 0, 0, .125);
     }
+
+    .divider {
+        height: 0;
+        margin: .5rem 0;
+        overflow: hidden;
+        border-top: 1px solid #e9ecef;
+    }
+
+    input[type=checkbox] {
+        width: 15px;
+        height: 15px;
+        /*background-color: #ddd;*/
+        border: 1px solid #ccc;
+        margin-right: 8px;
+        border-radius: 3px;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .form-check-label input[type=checkbox] {
+        position: relative;
+    }
+
+    input[type="checkbox"]:after {
+        content: '';
+        background: url("data:image/svg+xml;charset=utf-8,%3Csvg width='15' height='12' viewBox='3 7 10 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23008100' fill-rule='evenodd' d='M6.333 15L3 11.667l1.333-1.334 2 2L11.667 7 13 8.333z'/%3E%3C/svg%3E") 100% no-repeat;
+        width: 120%;
+        height: 100%;
+        display: inline-block;
+        position: absolute;
+        left: 55%;
+        top: 45%;
+        color: #008100;
+        font-size: 1.3em;
+        font-weight: 500;
+        /*font-family: meiryo, "sans-serif";*/
+        opacity: 0;
+        transition: all .1s ease;
+        transform: translate(-50%, -50%) scale3d(.2, .2, 1);
+        transform-origin: center center;
+    }
+
+    input[type="checkbox"]:checked:after {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale3d(1.2, 1.2, 1);
+    }
+
+    input[type="checkbox"]:disabled {
+        background-color: #ddd;
+    }
+
+    input[type="checkbox"]:disabled:after {
+        opacity: 0.5;
+        color: black;
+    }
+
+    .form-check-label input[type=checkbox] {
+        vertical-align: middle;
+        margin-bottom: 2px;
+        margin-top: initial;
+    }
+
+    .label-content-width {
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+    }
+
+    .user-select-none {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .redirect {
+        width: 520px;
+    }
+
+    @media screen and (max-width: 767px) {
+        .title {
+            padding-left: 5%;
+            padding-right: 5%;
+        }
+
+        .card {
+            width: 100%;
+        }
+
+        .redirect {
+            width: 100%;
+        }
+    }
+
 </style>
 <body style="margin: 0">
 <div class="title">
     <div class="float-left">OAUTH 授权</div>
     <div class="float-right" style="font-size: 16px">
         <span class="adminName" sec:authentication="principal.userName"></span>
-        <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.userName}"></span>
+        <!--        <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.userName}"></span>-->
         <a href="#help" class="text-white ml-2">帮助</a>
         <a th:href="${@environment.getProperty('cas.client.logout')}" class="text-white ml-2">退出</a>
     </div>
 </div>
-<div class="justify-content-center d-flex mt-3 mb-3">
-    <div class="text-left">
-        <h5 th:text="${clientId}+' 请求授权，该应用将获取你的以下信息'" class="mt-3 mb-3"></h5>
-        <form method="post" th:action="@{/oauth/authorize}">
-            <input type="hidden" name="user_oauth_approval" value="true">
-            <ul class="list-group mt-3 mb-3 scope-list-group">
-                <li th:each="scope:${scopes}" class="list-group-item">
-                    <div class="form-check mb-0">
-                        <label class="form-check-label font-weight-bold">
-                            <input type="checkbox" th:name="'scope.'+${scope}" th:value="true" class="form-check-input"
-                                   th:checked="${scope eq 'all' ? true : false}"
-                                   th:disabled="${scope eq 'all' ? true : false}">
-                            <span th:text="'scope.'+${scope}" class="font-weight-bold" th:remove="tag"></span>
-                        </label>
-                    </div>
-                    <label style="display: none">
-                        <input type="checkbox" th:if="${scope eq 'all'}" th:name="'scope.'+${scope}" th:value="true"
-                               class="form-check-input"
-                               th:checked="${scope eq 'all' ? true : false}">
-                    </label>
-                </li>
-            </ul>
-            授权后表明你已同意 <a href="#boot">服务协议</a><br>
-            <div class="w-100 text-right mt-3">
-                <button class="btn btn-primary" type="submit" name="authorize" th:value="Authorize">
-                    同意/授权
-                </button>
+<div class="justify-content-center d-flex mt-5 mb-5 flex-column">
+    <div class="text-left p-4 border-primary card m-auto">
+        <div>
+            <div class="d-flex align-items-center mb-2">
+                <img src="https://firstmetcs-pic.oss-cn-beijing.aliyuncs.com/favicon-512x512.png"
+                     style="height: 50px; background-color: #F3F3F3; border-radius: 6px"
+                     class="mr-3" alt="">
+                <div>
+                    <span class="text-info" th:text="${clientId}"></span><br>
+                    <span>想要访问您的 <span class="adminName text-primary"
+                                             sec:authentication="principal.userName"></span> 账户</span>
+                </div>
             </div>
-        </form>
+            <p class="text-warning">上述应用程序请求以下权限，如果您同意，请予以授权</p>
+            <form method="post" th:action="@{/oauth/authorize}">
+                <input type="hidden" name="user_oauth_approval" value="true">
+                <ul class="list-group mt-3 mb-3 scope-list-group px-3">
+                    <li th:each="scope:${scopes}" class="list-group-item">
+                        <div class="form-check mb-0">
+                            <label class="form-check-label user-select-none">
+                                <input type="checkbox" th:name="'scope.'+${scope}" th:value="true"
+                                       class="form-check-input"
+                                       th:checked="${scope eq 'all' ? true : false}"
+                                       th:disabled="${scope eq 'all' ? true : false}">
+                                <span>允许该应用获取: [
+                                    <span th:text="'scope.'+${scope}"
+                                          class="font-weight-bold label-content-width"></span>
+                                    ] 权限范围</span>
+                                <!-- th:remove="tag"-->
+                            </label>
+                        </div>
+                        <label style="display: none">
+                            <input type="checkbox" th:if="${scope eq 'all'}" th:name="'scope.'+${scope}" th:value="true"
+                                   class="form-check-input"
+                                   th:checked="${scope eq 'all' ? true : false}">
+                        </label>
+                    </li>
+                </ul>
+                <p>授权后表明你已同意 <a href="#boot">服务协议</a></p>
+                <p class="text-secondary small">如果您不授权，请单击“取消”，将不会与应用程序共享任何信息</p>
+                <div class="text-right mt-3 d-flex" style="gap: 12px">
+                    <button class="btn btn-outline-secondary media-body" type="reset" name="authorize"
+                            onclick="window.close();"
+                            th:value="Authorize">
+                        取消
+                    </button>
+                    <button class="btn btn-primary media-body" type="submit" name="authorize" th:value="Authorize">
+                        同意/授权
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="divider my-4"></div>
+        <div class="mb-2 text-center redirect">
+            <span class="text-center">授权将重定向到</span><br>
+            <div class="text-center small" th:text="${redirectUri}"></div>
+        </div>
     </div>
 </div>
 </body>
