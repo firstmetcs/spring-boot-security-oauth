@@ -31,6 +31,7 @@ public class GrantController {
         view.setViewName("grant");
         view.addObject("clientId", authorizationRequest.getClientId());
         view.addObject("scopes", authorizationRequest.getScope());
+        view.addObject("redirectUri", authorizationRequest.getRedirectUri());
         return view;
     }
 
