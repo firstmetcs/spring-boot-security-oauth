@@ -139,7 +139,7 @@ public class AuthorizationServiceConfig extends AuthorizationServerConfigurerAda
         // 添加自定义授权模式
         tokenGranters.add(new CustomTokenGranter(integrationUserDetailsService, tokenServices, clientDetails, requestFactory));
         // 添加自定义授权模式(cas)
-        tokenGranters.add(new CasTicketTokenGranter(authenticationManager, tokenServices, clientDetails, requestFactory));
+        tokenGranters.add(new CasTicketTokenGranter(oauthCasService, authenticationManager, tokenServices, clientDetails, requestFactory));
 
         return tokenGranters;
     }
