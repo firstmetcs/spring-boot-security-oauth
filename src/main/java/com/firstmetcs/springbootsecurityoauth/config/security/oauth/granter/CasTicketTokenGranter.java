@@ -1,6 +1,7 @@
 package com.firstmetcs.springbootsecurityoauth.config.security.oauth.granter;
 
 import com.firstmetcs.springbootsecurityoauth.config.security.oauth.service.OauthCasServiceImpl;
+import com.firstmetcs.springbootsecurityoauth.config.system.ApplicationContextProvider;
 import org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl;
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
 import org.springframework.security.authentication.*;
@@ -59,9 +60,11 @@ public class CasTicketTokenGranter extends AbstractTokenGranter {
         return new ProxyGrantingTicketStorageImpl();
     }
 
-    public static String casServerUrlPrefix = "https://sso.firstmetcs.net/cas";
 
     public org.springframework.security.cas.authentication.CasAuthenticationProvider casAuthenticationProvider(String url) {
+
+        String casServerUrlPrefix = ApplicationContextProvider.getString("cas.server.prefix");
+
         org.springframework.security.cas.authentication.CasAuthenticationProvider authenticationProvider = new org.springframework.security.cas.authentication.CasAuthenticationProvider();
         authenticationProvider.setKey("casProvider");
         authenticationProvider.setAuthenticationUserDetailsService(userDetailsService);
