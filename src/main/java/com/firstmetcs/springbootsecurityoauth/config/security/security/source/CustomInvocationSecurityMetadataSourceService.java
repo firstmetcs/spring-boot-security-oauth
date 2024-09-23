@@ -2,6 +2,7 @@ package com.firstmetcs.springbootsecurityoauth.config.security.security.source;
 
 import com.firstmetcs.springbootsecurityoauth.dao.security.SysApiMapper;
 import com.firstmetcs.springbootsecurityoauth.model.security.SysApi;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
@@ -38,12 +39,16 @@ public class CustomInvocationSecurityMetadataSourceService implements
      *
      * @return Map<String, String> url, code
      */
-    public Map<String, String> loadResourceDefine() {
-        Map<String, String> map = new LinkedHashMap<String, String>();
+    public Map<RequestMatcher, String> loadResourceDefine() {
+        Map<RequestMatcher, String> map = new LinkedHashMap<RequestMatcher, String>();
         List<SysApi> apis = sysApiMapper.findAll();
         for (SysApi api :
                 apis) {
-            map.put(api.getUrl(), api.getCode());
+            if (StringUtils.isEmpty(api.getMethod())) {
+                map.put(new AntPathRequestMatcher(api.getUrl()), api.getCode());
+            } else {
+                map.put(new AntPathRequestMatcher(api.getUrl(), api.getMethod().toUpperCase()), api.getCode());
+            }
         }
         return map;
     }
@@ -52,15 +57,15 @@ public class CustomInvocationSecurityMetadataSourceService implements
         Map<RequestMatcher, Collection<ConfigAttribute>> map =
                 new LinkedHashMap<RequestMatcher, Collection<ConfigAttribute>>();
 
-        Map<String, String> resMap = this.loadResourceDefine();
-        for (Map.Entry<String, String> entry : resMap.entrySet()) {
-            String key = entry.getKey();
+        Map<RequestMatcher, String> resMap = this.loadResourceDefine();
+        for (Map.Entry<RequestMatcher, String> entry : resMap.entrySet()) {
+            RequestMatcher key = entry.getKey();
             Collection<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
             //此处只添加了用户的名字，其实还可以添加更多权限的信息，例如请求方法到ConfigAttribute的集合中去。此处添加的信息将会作为MyAccessDecisionManager类的decide的第三个参数。
 //            ConfigAttribute configAttribute = new SecurityConfig(permission.getCode());
             configAttributes = SecurityConfig.createListFromCommaDelimitedString(entry.getValue());
             //用权限的getUrl() 作为map的key，用ConfigAttribute的集合作为 value，
-            map.put(new AntPathRequestMatcher(key), configAttributes);
+            map.put(key, configAttributes);
         }
 
         return map;
