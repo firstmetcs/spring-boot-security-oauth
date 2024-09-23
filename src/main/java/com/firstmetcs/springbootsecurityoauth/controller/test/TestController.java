@@ -61,4 +61,16 @@ public class TestController {
     public ResponseEntity<Object> testRoute(@ApiParam(name = "userId", value = "用户id", defaultValue = "0") @RequestParam String userId, HttpSession httpSession) throws Exception {
         return Results.success(sysRouteMapper.selectWithRoleByUserIdAndPid(userId, 0));
     }
+
+    @GetMapping("/test-method")
+    @ApiOperation(value = "测试方法", notes = "测试方法备注", httpMethod = "GET")
+    public ResponseEntity<Object> testMethodGet(HttpSession httpSession) throws Exception {
+        return Results.success("test-method-get");
+    }
+
+    @PostMapping("/test-method")
+    @ApiOperation(value = "测试方法", notes = "测试方法备注", httpMethod = "POST")
+    public ResponseEntity<Object> testMethodPost(HttpSession httpSession) throws Exception {
+        return Results.success("test-method-post");
+    }
 }
