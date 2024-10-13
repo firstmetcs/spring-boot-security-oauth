@@ -83,7 +83,9 @@ public class RouteServiceImpl implements RouteService {
 
         sysRoleRouteMapper.deleteByRoleId(record.getId());
 
-        sysRoleRouteMapper.batchInsert(roleRouteList);
+        if (!roleRouteList.isEmpty()) {
+            sysRoleRouteMapper.batchInsert(roleRouteList);
+        }
 
         return 0;
     }
