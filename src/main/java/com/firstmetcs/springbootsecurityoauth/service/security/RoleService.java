@@ -10,4 +10,6 @@ import java.util.List;
 public interface RoleService {
 
     List<SysRole> selectAllRole();
+
+    int insertOrUpdateByPrimaryKey(SysRole record);
 }

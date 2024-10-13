@@ -40,4 +40,11 @@ public class RoleController {
     public ResponseEntity<Object> modifyRouteOfRole(@ApiParam(name = "sysRole", value = "路由信息") @RequestBody SysRole sysRole) {
         return Results.success(routeService.modifyRouteOfRole(sysRole));
     }
+
+    @ResponseBody
+    @PostMapping("/add-or-update")
+    @ApiOperation(value = "新增或修改角色", notes = "新增或修改角色备注", httpMethod = "POST")
+    public ResponseEntity<Object> addOrUpdateRole(@ApiParam(name = "sysRole", value = "角色信息") @RequestBody SysRole sysRole) {
+        return Results.success(roleService.insertOrUpdateByPrimaryKey(sysRole));
+    }
 }
