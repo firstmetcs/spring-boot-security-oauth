@@ -151,4 +151,15 @@
       #{roleRoute.status,jdbcType=INTEGER}, #{roleRoute.remark,jdbcType=VARCHAR} from dual
     </foreach >
   </insert>
+  <delete id="deleteNotIn" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoleRoute">
+    delete from SYS_ROLE_ROUTE
+    where ID not in
+    (select id from sys_role_route where
+    <foreach collection="list" item="roleRoute" separator="or">
+      ROLE_ID = #{roleRoute.roleId,jdbcType=INTEGER} and
+      ROUTE_ID = #{roleRoute.routeId,jdbcType=INTEGER}
+    </foreach >
+    )
+    and ROLE_ID = #{roleRoute.roleId,jdbcType=INTEGER}
+  </delete>
 </mapper>

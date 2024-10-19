@@ -20,4 +20,6 @@ public interface SysRoleRouteMapper {
     int deleteByRoleId(Integer roleId);
 
     int batchInsert(List<SysRoleRoute> list);
+
+    int deleteNotIn(SysRoleRoute record);
 }
