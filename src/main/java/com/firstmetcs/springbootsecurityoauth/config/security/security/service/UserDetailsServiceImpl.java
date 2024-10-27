@@ -42,7 +42,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 //1：此处将角色信息添加到 GrantedAuthority 对象中，在后面进行全权限验证时会使用GrantedAuthority 对象。
                 grantedAuthorities.add(roleGrantedAuthority);
 
-                for (SysApi api : role.getApiList()) {
+                List<SysApi> apiList = role.getRouteList().stream().map(SysRoute::getApiList).flatMap(List::stream).distinct().collect(Collectors.toList());
+
+                List<SysApi> collect = role.getPermissionList().stream().map(SysPermission::getApiList).flatMap(List::stream).distinct().collect(Collectors.toList());
+                apiList.addAll(collect);
+
+                for (SysApi api : apiList) {
                     if (api != null && api.getCode() != null) {
 
                         GrantedAuthority apiGrantedAuthority = new SimpleGrantedAuthority(api.getCode());

@@ -28,15 +28,24 @@
       <result column="ROLE_NAME" jdbcType="VARCHAR" property="name" />
       <result column="ROLE_STATUS" jdbcType="INTEGER" property="status" />
       <result column="ROLE_REMARK" jdbcType="VARCHAR" property="remark" />
-      <collection property="apiList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysApi">
-        <id column="API_ID" jdbcType="INTEGER" property="id" />
-        <result column="API_CODE" jdbcType="VARCHAR" property="code" />
-        <result column="API_NAME" jdbcType="VARCHAR" property="name" />
-        <result column="API_DESCRIPTION" jdbcType="VARCHAR" property="description" />
-        <result column="API_URL" jdbcType="VARCHAR" property="url" />
-        <result column="API_METHOD" jdbcType="VARCHAR" property="method" />
-        <result column="API_STATUS" jdbcType="INTEGER" property="status" />
-        <result column="API_REMARK" jdbcType="VARCHAR" property="remark" />
+      <collection property="routeList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysRoute">
+        <id column="ROUTE_ID" jdbcType="INTEGER" property="id" />
+        <result column="ROUTE_CODE" jdbcType="VARCHAR" property="code" />
+        <result column="ROUTE_NAME" jdbcType="VARCHAR" property="name" />
+        <result column="ROUTE_PATH" jdbcType="VARCHAR" property="path" />
+        <result column="ROUTE_ICON" jdbcType="VARCHAR" property="icon" />
+        <result column="ROUTE_HIDE_IN_MENU" jdbcType="INTEGER" property="hideInMenu" />
+        <result column="ROUTE_PID" jdbcType="INTEGER" property="pid" />
+        <collection property="apiList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysApi">
+          <id column="API_ID" jdbcType="INTEGER" property="id" />
+          <result column="API_CODE" jdbcType="VARCHAR" property="code" />
+          <result column="API_NAME" jdbcType="VARCHAR" property="name" />
+          <result column="API_DESCRIPTION" jdbcType="VARCHAR" property="description" />
+          <result column="API_URL" jdbcType="VARCHAR" property="url" />
+          <result column="API_METHOD" jdbcType="VARCHAR" property="method" />
+          <result column="API_STATUS" jdbcType="INTEGER" property="status" />
+          <result column="API_REMARK" jdbcType="VARCHAR" property="remark" />
+        </collection>
       </collection>
       <collection property="permissionList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysPermission">
         <id column="PERMISSION_ID" jdbcType="INTEGER" property="id" />
@@ -44,6 +53,16 @@
         <result column="PERMISSION_NAME" jdbcType="VARCHAR" property="name" />
         <result column="PERMISSION_STATUS" jdbcType="INTEGER" property="status" />
         <result column="PERMISSION_REMARK" jdbcType="VARCHAR" property="remark" />
+        <collection property="apiList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysApi">
+          <id column="PAPI_ID" jdbcType="INTEGER" property="id" />
+          <result column="PAPI_CODE" jdbcType="VARCHAR" property="code" />
+          <result column="PAPI_NAME" jdbcType="VARCHAR" property="name" />
+          <result column="PAPI_DESCRIPTION" jdbcType="VARCHAR" property="description" />
+          <result column="PAPI_URL" jdbcType="VARCHAR" property="url" />
+          <result column="PAPI_METHOD" jdbcType="VARCHAR" property="method" />
+          <result column="PAPI_STATUS" jdbcType="INTEGER" property="status" />
+          <result column="PAPI_REMARK" jdbcType="VARCHAR" property="remark" />
+        </collection>
       </collection>
     </collection>
   </resultMap>
@@ -54,8 +73,10 @@
   <sql id="Join_Column_List">
     su.ID, su.USER_ID, su.USER_NAME, su.USER_EMAIL, su.PASSWORD, su.STATUS, su.REMARK,
     sr.ID ROLE_ID, sr.CODE ROLE_CODE, sr.NAME ROLE_NAME, sr.STATUS ROLE_STATUS, sr.REMARK ROLE_REMARK,
+    srt.ID ROUTE_ID, srt.CODE ROUTE_CODE, srt.NAME ROUTE_NAME, srt.PATH ROUTE_PATH, srt.ICON ROUTE_ICON, srt.HIDE_IN_MENU ROUTE_HIDE_IN_MENU, srt.PID ROUTE_PID,
     sap.ID API_ID, sap.CODE API_CODE, sap.NAME API_NAME, sap.DESCRIPTION API_DESCRIPTION, sap.URL API_URL, sap.METHOD API_METHOD, sap.STATUS API_STATUS, sap.REMARK API_REMARK,
-    spe.ID PERMISSION_ID, spe.CODE PERMISSION_CODE, spe.NAME PERMISSION_NAME, spe.STATUS PERMISSION_STATUS, spe.REMARK PERMISSION_REMARK
+    spe.ID PERMISSION_ID, spe.CODE PERMISSION_CODE, spe.NAME PERMISSION_NAME, spe.STATUS PERMISSION_STATUS, spe.REMARK PERMISSION_REMARK,
+    spap.ID PAPI_ID, spap.CODE PAPI_CODE, spap.NAME PAPI_NAME, spap.DESCRIPTION PAPI_DESCRIPTION, spap.URL PAPI_URL, spap.METHOD PAPI_METHOD, spap.STATUS PAPI_STATUS, spap.REMARK PAPI_REMARK
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
@@ -226,6 +247,8 @@
     left join SYS_API sap on srap.API_ID = sap.ID
     left join SYS_ROLE_PERMISSION srpe on sr.ID = srpe.ROLE_ID
     left join SYS_PERMISSION spe on srpe.PERMISSION_ID = spe.ID
+    left join SYS_PERMISSION_API spa on spa.PERMISSION_ID = spe.ID
+    left join SYS_API spap on spa.API_ID = spap.ID
     where su.USER_ID = #{userId,jdbcType=VARCHAR}
   </select>
 </mapper>

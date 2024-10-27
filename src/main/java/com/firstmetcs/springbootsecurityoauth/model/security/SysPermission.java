@@ -1,5 +1,8 @@
 package com.firstmetcs.springbootsecurityoauth.model.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SysPermission {
     private Integer id;
 
@@ -10,6 +13,8 @@ public class SysPermission {
     private Integer status;
 
     private String remark;
+
+    List<SysApi> apiList = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -49,5 +54,13 @@ public class SysPermission {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public List<SysApi> getApiList() {
+        return apiList;
+    }
+
+    public void setApiList(List<SysApi> apiList) {
+        this.apiList = apiList;
     }
 }

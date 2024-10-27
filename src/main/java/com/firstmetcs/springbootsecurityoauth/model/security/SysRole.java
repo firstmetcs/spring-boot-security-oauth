@@ -23,8 +23,6 @@ public class SysRole {
 
     private Date updDttm;
 
-    List<SysApi> apiList = new ArrayList<>();
-
     List<SysPermission> permissionList = new ArrayList<>();
 
     List<SysRoute> routeList = new ArrayList<>();
@@ -67,14 +65,6 @@ public class SysRole {
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
-    }
-
-    public List<SysApi> getApiList() {
-        return apiList;
-    }
-
-    public void setApiList(List<SysApi> apiList) {
-        this.apiList = apiList;
     }
 
     public List<SysPermission> getPermissionList() {
