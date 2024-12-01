@@ -22,6 +22,15 @@
       <result column="HIDE_IN_MENU" jdbcType="INTEGER" property="hideInMenu" />
       <result column="PID" jdbcType="INTEGER" property="pid" />
     </collection>
+    <collection property="routeList" ofType="com.firstmetcs.springbootsecurityoauth.model.security.SysPermission"
+                select="com.firstmetcs.springbootsecurityoauth.dao.security.SysPermissionMapper.selectByRoleId"
+                column="ID">
+      <id column="ID" jdbcType="INTEGER" property="id" />
+      <result column="CODE" jdbcType="VARCHAR" property="code" />
+      <result column="NAME" jdbcType="VARCHAR" property="name" />
+      <result column="STATUS" jdbcType="INTEGER" property="status" />
+      <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    </collection>
   </resultMap>
   <sql id="Base_Column_List">
     ID, CODE, NAME, STATUS, REMARK, INS_USER_ID, INS_DTTM, UPD_USER_ID, UPD_DTTM

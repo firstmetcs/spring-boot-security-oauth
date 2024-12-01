@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.firstmetcs.springbootsecurityoauth.dao.security.SysRolePermissionMapper">
+  <resultMap id="BaseResultMap" type="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="permission_id" jdbcType="INTEGER" property="permissionId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role_id, permission_id, status, remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_role_permission
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_role_permission
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    insert into sys_role_permission (id, role_id, permission_id, 
+      status, remark)
+    values (#{id,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{permissionId,jdbcType=INTEGER}, 
+      #{status,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    insert into sys_role_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    update sys_role_permission
+    <set>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="permissionId != null">
+        permission_id = #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    update sys_role_permission
+    set role_id = #{roleId,jdbcType=INTEGER},
+      permission_id = #{permissionId,jdbcType=INTEGER},
+      status = #{status,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+    delete from sys_role_permission
+    where ROLE_ID = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="batchInsert" parameterType="com.firstmetcs.springbootsecurityoauth.model.security.SysRolePermission">
+    insert into SYS_ROLE_PERMISSION (ROLE_ID, PERMISSION_ID,
+    STATUS, REMARK)
+    <foreach collection ="list" item="rolePermission" separator="union">
+      select #{rolePermission.roleId,jdbcType=INTEGER}, #{rolePermission.permissionId,jdbcType=INTEGER},
+      #{rolePermission.status,jdbcType=INTEGER}, #{rolePermission.remark,jdbcType=VARCHAR} from dual
+    </foreach >
+  </insert>
+</mapper>

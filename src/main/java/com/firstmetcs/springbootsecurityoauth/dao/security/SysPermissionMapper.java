@@ -2,6 +2,8 @@ package com.firstmetcs.springbootsecurityoauth.dao.security;
 
 import com.firstmetcs.springbootsecurityoauth.model.security.SysPermission;
 
+import java.util.List;
+
 public interface SysPermissionMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,8 @@ public interface SysPermissionMapper {
     int updateByPrimaryKeySelective(SysPermission record);
 
     int updateByPrimaryKey(SysPermission record);
+
+    List<SysPermission> selectAll();
+
+    List<SysPermission> selectByRoleId();
 }

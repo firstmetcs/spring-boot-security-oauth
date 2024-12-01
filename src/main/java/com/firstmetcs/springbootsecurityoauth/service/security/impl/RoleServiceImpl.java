@@ -2,6 +2,7 @@ package com.firstmetcs.springbootsecurityoauth.service.security.impl;
 
 import com.firstmetcs.springbootsecurityoauth.dao.security.SysRoleMapper;
 import com.firstmetcs.springbootsecurityoauth.model.security.SysRole;
+import com.firstmetcs.springbootsecurityoauth.service.security.PermissionService;
 import com.firstmetcs.springbootsecurityoauth.service.security.RoleService;
 import com.firstmetcs.springbootsecurityoauth.service.security.RouteService;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class RoleServiceImpl implements RoleService {
     private SysRoleMapper sysRoleMapper;
     @Resource
     private RouteService routeService;
+    @Resource
+    private PermissionService permissionService;
 
     @Override
     public List<SysRole> selectAllRole() {
@@ -36,6 +39,7 @@ public class RoleServiceImpl implements RoleService {
             res = sysRoleMapper.updateByPrimaryKey(record);
         }
         routeService.modifyRouteOfRole(record);
+        permissionService.modifyPermissionOfRole(record);
         return res;
     }
 }
